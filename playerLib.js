@@ -1,36 +1,58 @@
 window.player=//object
 {
-    path:
+    butn: document.getElementById("toglButn"),
+
+
+    init: function()
     {
-        fake:"http://anon.rendr.org/whatever.html/$file/audio4.mp3",
-        real:"/sound/",
-    },
+        // validation .. detect error .. saves time in debugging later
+        if(((typeof mp3File)=="undefined")||!mp3File) // check if global is defined
+        {console.error("global var `mp3File` is invalid"); return}; // prevent errors 
+        if(!this.butn){console.error(" element `#toglButn` is undefined"); return}; // safety first
+        // return (above) if invalid, no need to wrap inside `if` block .. less indentation = cleaner code
+        // -----------------------
 
-    init:function()
-    {
-        var dlim = "$file/";
-        var file = this.path.fake.split("$file/").pop();  // ??
 
-        this.audi = (new Audio(this.path.real+file));
-        this.wait = setInterval(function()
-        {
-            if(!player.ready){return};
-            if(player.playing){clearInterval(player.wait);};
-            player.audi.play();
-        },250);
 
-        this.butn = document.createElement("img");
-        this.butn.src = "/image/play.png";
-        this.butn.onclick = function(){if(player.playing){player.audi.pause(); return}; player.audi.play()};
-        document.body.appendChild(this.butn);
+        // initialize audio object
+    	this.audi = (new Audio(mp3Audio));
+        // -----------------------
 
-        this.audi.addEventListener("canplaythrough",function(){player.ready=1;});
-        this.audi.addEventListener("play",function(){player.playing=1; player.butn.src="/image/pause.png";});
-        this.audi.addEventListener("pause",function(){player.playing=0; player.butn.src="/image/play.png";});
+
+        // listen on events
+        this.butn.addEventListener("click",function(){
+    		if(player.playing){
+    			player.audi.pause(); 
+    			return;
+    		}; 
+    		player.audi.play()
+    	});
+
+    	this.audi.addEventListener("canplaythrough",function(){
+    		player.ready=1;
+    	});
+    
+    	this.audi.addEventListener("play",function(){
+    		player.playing=1;
+			localStorage.setItem("autoPlay","true");
+    		player.butn.value="pause";
+    	});
+    
+    	this.audi.addEventListener("pause",function(){
+    		player.playing=0;
+			localStorage.setItem("autoPlay","false");
+    		player.butn.value="play";
+    	});
+        // -----------------------
+
+
+        // if remember playing last then play now .. if browser allows
+    	if(localStorage.getItem("autoPlay")=="true"){
+            player.play();
+		}
+        // -----------------------
     },
 };
 
 
 player.init();
-
-console.log(player.path);
