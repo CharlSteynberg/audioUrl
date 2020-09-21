@@ -1,7 +1,32 @@
 <html>
+    <head>
+        <style>
+            butn
+            {
+                display:inline-block;
+                width:60px; height:60px;
+                background:url("/image/playTogl.png");
+                background-size:180px 60px;
+                overflow:hidden;
+                cursor:pointer;
+                outline:none;
+            }
+
+            butn.pasv
+            {background-position:0px,0px;}
+
+            butn.wait
+            {background-position:-60px,0px;}
+
+            butn.actv
+            {background-position:-120px,0px;}
+        </style>
+    </head>
     <body>
         <h1>player thingy</h1>
         <p>Some random text</p>
+
+        <butn url="/sound/audio3.mp3" id="toglButn" class="pasv" title="audio control" tabindex="-1"></butn>
 
         <script src="playerLib.js"></script>
     </body>

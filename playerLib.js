@@ -1,58 +1,41 @@
-window.player=//object
+window.player=(function()
 {
-    butn: document.getElementById("toglButn"),
+// defn :: elements : define elements we need .. make them become one
+// --------------------------------------------------------------------------------------
+    this.butn = document.getElementById("toglButn");        // the button
+    this.audi = (new Audio(this.butn.getAttribute("url"))); // the audio
+    this.butn.audi = this.audi; // one belongs to the other
+    this.audi.butn = this.butn; // the other belongs to one
+// --------------------------------------------------------------------------------------
 
 
-    init: function()
+// evnt :: button : all button-related events
+// --------------------------------------------------------------------------------------
+    this.butn.addEventListener("click",function()
     {
-        // validation .. detect error .. saves time in debugging later
-        if(((typeof mp3File)=="undefined")||!mp3File) // check if global is defined
-        {console.error("global var `mp3File` is invalid"); return}; // prevent errors 
-        if(!this.butn){console.error(" element `#toglButn` is undefined"); return}; // safety first
-        // return (above) if invalid, no need to wrap inside `if` block .. less indentation = cleaner code
-        // -----------------------
+        if(this.audi.wait){return}; // don't click me, i'm busy
+        if(this.audi.actv){this.audi.pause(); this.audi.actv=0; return}; // pause
+        this.audi.play(); this.audi.actv=1; // play
+    });
+
+    this.butn.addEventListener("blur",function()
+    {this.audi.pause(); this.audi.actv=0;});
+// --------------------------------------------------------------------------------------
 
 
+// evnt :: audio : all audio-related events
+// --------------------------------------------------------------------------------------
+    this.audi.addEventListener("waiting",function()
+    {this.butn.className="wait"; this.wait=1;}); // wait - update button face
 
-        // initialize audio object
-    	this.audi = (new Audio(mp3Audio));
-        // -----------------------
+    this.audi.addEventListener("canplay",function()
+    {this.butn.className="pasv";}); // pasv - update button face
 
+    this.audi.addEventListener("playing",function()
+    {this.butn.className="actv"; this.wait=0;}); // actv - update button face
 
-        // listen on events
-        this.butn.addEventListener("click",function(){
-    		if(player.playing){
-    			player.audi.pause(); 
-    			return;
-    		}; 
-    		player.audi.play()
-    	});
-
-    	this.audi.addEventListener("canplaythrough",function(){
-    		player.ready=1;
-    	});
-    
-    	this.audi.addEventListener("play",function(){
-    		player.playing=1;
-			localStorage.setItem("autoPlay","true");
-    		player.butn.value="pause";
-    	});
-    
-    	this.audi.addEventListener("pause",function(){
-    		player.playing=0;
-			localStorage.setItem("autoPlay","false");
-    		player.butn.value="play";
-    	});
-        // -----------------------
-
-
-        // if remember playing last then play now .. if browser allows
-    	if(localStorage.getItem("autoPlay")=="true"){
-            player.play();
-		}
-        // -----------------------
-    },
-};
-
-
-player.init();
+    this.audi.addEventListener("pause",function()
+    {this.butn.className="pasv";}); // pasv - update button face
+// --------------------------------------------------------------------------------------
+}
+.bind({})());
